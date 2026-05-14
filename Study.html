@@ -31,16 +31,10 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .dash-btn:active{transform:scale(0.9);background:var(--accent);color:#fff}
 #progress-bar-wrap{height:2px;background:var(--surface2);margin:0 20px;border-radius:1px;overflow:hidden;flex-shrink:0}
 #progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:1px;transition:width .4s ease;width:0%}
-#lang-tabs{display:flex;gap:6px;padding:8px 20px 0;flex-shrink:0}
-.lang-tab{padding:5px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.lang-tab.active-en{background:var(--accent);border-color:var(--accent);color:#fff}
-.lang-tab.active-ja{background:var(--red);border-color:var(--red);color:#fff}
-.lang-tab.active-all{background:var(--surface2);border-color:var(--accent2);color:var(--accent2)}
-#jlpt-tabs{display:flex;align-items:center;gap:5px;padding:5px 20px 2px;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
-#jlpt-tabs::-webkit-scrollbar{display:none}
-.jlpt-label{font-size:10px;color:var(--text3);margin-right:3px;white-space:nowrap;font-weight:600}
-.jlpt-tab{padding:3px 10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.jlpt-tab.active{background:rgba(108,99,255,.2);border-color:var(--accent);color:var(--accent)}
+#filter-tabs{display:flex;gap:6px;padding:8px 20px 4px;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+#filter-tabs::-webkit-scrollbar{display:none}
+.filter-tab{padding:5px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.filter-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
 #card-area{flex:1;display:flex;align-items:center;justify-content:center;padding:12px 20px 8px;}
 /* 容器本身不做3D旋转，保持2D确保点击可靠 */
 .flashcard-scene{width:100%;max-width:380px;height:320px;position:relative;cursor:pointer;perspective:1200px}
@@ -128,17 +122,12 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
   </div>
   <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
-  <div id="lang-tabs">
-    <div class="lang-tab active-all" data-filter="all">全部</div>
-    <div class="lang-tab" data-filter="en">英语</div>
-    <div class="lang-tab" data-filter="ja">日语</div>
-  </div>
-  <div id="jlpt-tabs">
-    <span class="jlpt-label">JLPT</span>
-    <div class="jlpt-tab active" data-jlpt="N1">N1</div>
-    <div class="jlpt-tab active" data-jlpt="N2">N2</div>
-    <div class="jlpt-tab active" data-jlpt="N3">N3</div>
-    <div class="jlpt-tab active" data-jlpt="custom">自学</div>
+  <div id="filter-tabs">
+    <div class="filter-tab active" data-filter="en">英语</div>
+    <div class="filter-tab" data-filter="ja">日语</div>
+    <div class="filter-tab" data-filter="N1">N1</div>
+    <div class="filter-tab" data-filter="N2">N2</div>
+    <div class="filter-tab" data-filter="N3">N3</div>
   </div>
 
   <div id="no-data" style="display:none">
@@ -9902,8 +9891,7 @@ let masteredSet=new Set();
 let pool=[];
 let currentIdx=-1;
 let isFlipped=false;
-let langFilter='all'; // 'all'|'en'|'ja'
-let jlptFilter=new Set(['N1','N2','N3','custom']);
+let activeFilter='en'; // 'en'|'ja'|'N1'|'N2'|'N3'
 
 // ── 语言检测 ──
 function detectLang(text){
@@ -9926,19 +9914,21 @@ function saveMastered(){
 }
 
 // ── 词池 ──
+function matchesFilter(item){
+  switch(activeFilter){
+    case 'en': return item.lang==='en';
+    case 'ja': return item.lang==='ja';
+    case 'N1': return item.lang==='ja'&&item.jlpt==='N1';
+    case 'N2': return item.lang==='ja'&&item.jlpt==='N2';
+    case 'N3': return item.lang==='ja'&&item.jlpt==='N3';
+    default:   return true;
+  }
+}
 function buildPool(){
-  const filtered=allWords
-    .map((_,i)=>i)
-    .filter(i=>{
-      const item=allWords[i];
-      if(masteredSet.has(item.w)) return false;
-      if(langFilter!=='all' && item.lang!==langFilter) return false;
-      if(item.lang==='ja'){
-        const lvl=item.jlpt||'custom';
-        if(!jlptFilter.has(lvl)) return false;
-      }
-      return true;
-    });
+  const filtered=allWords.map((_,i)=>i).filter(i=>{
+    if(masteredSet.has(allWords[i].w)) return false;
+    return matchesFilter(allWords[i]);
+  });
   pool=filtered;
   shuffleArray(pool);
 }
@@ -10055,14 +10045,7 @@ function showEmpty(){
   updateDashboard();
 }
 function getFilteredTotal(){
-  return allWords.filter(item=>{
-    if(langFilter!=='all'&&item.lang!==langFilter) return false;
-    if(item.lang==='ja'){
-      const lvl=item.jlpt||'custom';
-      if(!jlptFilter.has(lvl)) return false;
-    }
-    return true;
-  }).length;
+  return allWords.filter(matchesFilter).length;
 }
 function updateDashboard(){
   const total=getFilteredTotal();
@@ -10109,32 +10092,12 @@ function resetMastered(){
   if(pool.length){showMainUI();showCard(pool[0])}
 }
 
-// ── 语言筛选 ──
-document.querySelectorAll('.lang-tab').forEach(tab=>{
+// ── 筛选 ──
+document.querySelectorAll('.filter-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
-    langFilter=tab.dataset.filter;
-    document.querySelectorAll('.lang-tab').forEach(t=>{t.className='lang-tab';});
-    const cls=langFilter==='en'?'active-en':langFilter==='ja'?'active-ja':'active-all';
-    tab.classList.add(cls);
-    buildPool();
-    updateDashboard();
-    if(pool.length){showMainUI();showCard(pool[Math.floor(Math.random()*pool.length)],true);}
-    else{showEmpty();}
-  });
-});
-
-// ── JLPT 等级筛选 ──
-document.querySelectorAll('.jlpt-tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    const lv=tab.dataset.jlpt;
-    if(jlptFilter.has(lv)){
-      if(jlptFilter.size>1) jlptFilter.delete(lv);
-    } else {
-      jlptFilter.add(lv);
-    }
-    document.querySelectorAll('.jlpt-tab').forEach(t=>{
-      t.classList.toggle('active',jlptFilter.has(t.dataset.jlpt));
-    });
+    activeFilter=tab.dataset.filter;
+    document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
     buildPool();
     updateDashboard();
     if(pool.length){showMainUI();showCard(pool[Math.floor(Math.random()*pool.length)],true);}
@@ -10317,7 +10280,7 @@ function init(){
   document.getElementById('import-btn').addEventListener('click',openImport);
 
   // 初始化语言筛选 tab 状态
-  document.querySelector('[data-filter="all"]').classList.add('active-all');
+  document.querySelector('[data-filter="en"]').classList.add('active');
 
   buildPool();
 
