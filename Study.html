@@ -52,7 +52,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .badge-en{background:rgba(108,99,255,.2);color:var(--accent2)}
 .badge-ja{background:rgba(255,71,87,.2);color:var(--red)}
 .badge-zh{background:rgba(52,211,153,.2);color:var(--green)}
-.sound-btn{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);color:var(--accent2);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:2}
+.sound-btn{position:absolute;top:12px;right:12px;width:48px;height:48px;border-radius:50%;background:rgba(108,99,255,.18);border:1.5px solid rgba(108,99,255,.4);color:var(--accent2);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:2;-webkit-tap-highlight-color:transparent}
 .sound-btn:active{transform:scale(0.85);background:var(--accent);color:#fff}
 #word-display{font-size:clamp(28px,8vw,44px);font-weight:800;letter-spacing:-1px;text-align:center;color:var(--text);line-height:1.15;word-break:break-word;margin-top:8px}
 #phonetic-display{margin-top:8px;font-size:15px;color:var(--text3);letter-spacing:0.5px;font-style:italic;min-height:20px}
@@ -512,7 +512,7 @@ const BUILTIN = [
 {w:"riot",d:"暴动",lang:"en"},
 {w:"crane",d:"起重机",lang:"en"},
 {w:"うなぎ",d:"鳗鱼",lang:"ja"},
-{w:"太字",d:"大胆的",lang:"zh"},
+{w:"太字",d:"大胆的",lang:"ja"},
 {w:"deliberately",d:"故意地",lang:"en"},
 {w:"newscum",d:"新闻界",lang:"en"},
 {w:"astonishing",d:"惊人",lang:"en"},
@@ -555,9 +555,9 @@ const BUILTIN = [
 {w:"pedestal fan",d:"落地扇",lang:"en"},
 {w:"complementary",d:"补充",lang:"en"},
 {w:"irrigation",d:"灌溉",lang:"en"},
-{w:"相手",d:"伙伴",lang:"zh"},
-{w:"仲間",d:"同伴",lang:"zh"},
-{w:"涙",d:"眼泪",lang:"zh"},
+{w:"相手",d:"伙伴",lang:"ja"},
+{w:"仲間",d:"同伴",lang:"ja"},
+{w:"涙",d:"眼泪",lang:"ja"},
 {w:"legacy",d:"遗产",lang:"en"},
 {w:"protocol",d:"协议",lang:"en"},
 {w:"intuitive",d:"直觉的",lang:"en"},
@@ -608,9 +608,9 @@ const BUILTIN = [
 {w:"to be biased",d:"有偏见",lang:"en"},
 {w:"to harden",d:"硬化",lang:"en"},
 {w:"cassette",d:"磁带",lang:"en"},
-{w:"癖",d:"习惯",lang:"zh"},
+{w:"癖",d:"习惯",lang:"ja"},
 {w:"nibbled",d:"轻咬",lang:"en"},
-{w:"熟的",d:"熟した",lang:"zh"},
+{w:"熟的",d:"熟した",lang:"en"},
 {w:"ripened",d:"成熟的",lang:"en"},
 {w:"volcanic vent",d:"火山喷气孔",lang:"en"},
 {w:"wobbling",d:"摇晃",lang:"en"},
@@ -629,7 +629,7 @@ const BUILTIN = [
 {w:"sharply",d:"急剧地",lang:"en"},
 {w:"stinging",d:"刺痛",lang:"en"},
 {w:"hangover",d:"宿醉",lang:"en"},
-{w:"parched",d:"干渴",lang:"en"},
+{w:"parched",d:"干渴",lang:"ja"},
 {w:"charity",d:"慈善事业",lang:"en"},
 {w:"curricular activities",d:"课程活动",lang:"en"},
 {w:"hypothesis",d:"假设",lang:"en"},
@@ -637,7 +637,7 @@ const BUILTIN = [
 {w:"万引き",d:"商店行窃",lang:"ja"},
 {w:"離れて",d:"离开",lang:"ja"},
 {w:"jurisdiction",d:"管辖权",lang:"en"},
-{w:"鏡",d:"镜子",lang:"zh"},
+{w:"鏡",d:"镜子",lang:"ja"},
 {w:"restlessly",d:"躁动不安",lang:"en"},
 {w:"stroll aimlessly",d:"漫无目的地闲逛",lang:"en"},
 {w:"stringy",d:"粘性的",lang:"en"},
@@ -716,7 +716,7 @@ const BUILTIN = [
 {w:"tease",d:"挑逗",lang:"en"},
 {w:"mischief",d:"恶作剧",lang:"en"},
 {w:"fountain",d:"喷泉",lang:"en"},
-{w:"環境",d:"环境",lang:"zh"},
+{w:"環境",d:"环境",lang:"ja"},
 {w:"すがた",d:"外貌",lang:"ja"},
 {w:"autobiography",d:"自传",lang:"en"},
 {w:"涼しい",d:"凉爽的",lang:"ja"},
@@ -890,7 +890,7 @@ const BUILTIN = [
 {w:"excessive",d:"过多的",lang:"en"},
 {w:"listless",d:"懒洋洋",lang:"en"},
 {w:"languid",d:"慵懒的",lang:"en"},
-{w:"嵐",d:"风暴",lang:"zh"},
+{w:"嵐",d:"风暴",lang:"ja"},
 {w:"sloppy",d:"邋遢",lang:"en"},
 {w:"creepy",d:"异样",lang:"en"},
 {w:"eerie",d:"怪异",lang:"en"},
@@ -973,16 +973,16 @@ const BUILTIN = [
 {w:"masquerade",d:"化装舞会",lang:"en"},
 {w:"伝える",d:"告诉",lang:"ja"},
 {w:"告白する",d:"承认",lang:"ja"},
-{w:"案内",d:"指导",lang:"zh"},
+{w:"案内",d:"指导",lang:"ja"},
 {w:"任せます",d:"就交给你了。",lang:"ja"},
 {w:"のことだし",d:"我的意思就是这样。",lang:"ja"},
 {w:"相手の",d:"对方的",lang:"ja"},
 {w:"によって",d:"经过",lang:"ja"},
 {w:"すべて",d:"全部",lang:"ja"},
-{w:"選択肢",d:"选择",lang:"zh"},
+{w:"選択肢",d:"选择",lang:"ja"},
 {w:"に応じて",d:"根据",lang:"ja"},
-{w:"応援",d:"支持",lang:"zh"},
-{w:"恋人",d:"情人",lang:"zh"},
+{w:"応援",d:"支持",lang:"ja"},
+{w:"恋人",d:"情人",lang:"ja"},
 {w:"outpace",d:"超过",lang:"en"},
 {w:"formidable",d:"强大",lang:"en"},
 {w:"backbreaking",d:"令人筋疲力尽",lang:"en"},
@@ -1065,7 +1065,7 @@ const BUILTIN = [
 {w:"mixture",d:"混合物",lang:"en"},
 {w:"sparse",d:"疏",lang:"en"},
 {w:"matrix",d:"矩阵",lang:"en"},
-{w:"緑",d:"绿色的",lang:"zh"},
+{w:"緑",d:"绿色的",lang:"ja"},
 {w:"footage",d:"画面",lang:"en"},
 {w:"brevet",d:"特许状",lang:"en"},
 {w:"aisle",d:"走道",lang:"en"},
@@ -1088,7 +1088,7 @@ const BUILTIN = [
 {w:"必ず",d:"一定",lang:"ja"},
 {w:"役に立つ",d:"有用",lang:"ja"},
 {w:"いつか",d:"总有一天",lang:"ja"},
-{w:"紫",d:"紫色的",lang:"zh"},
+{w:"紫",d:"紫色的",lang:"ja"},
 {w:"intermittent",d:"间歇性的",lang:"en"},
 {w:"expat",d:"外籍人士",lang:"en"},
 {w:"kettle",d:"壶",lang:"en"},
@@ -1112,13 +1112,13 @@ const BUILTIN = [
 {w:"blanketing",d:"覆盖",lang:"en"},
 {w:"allegedly",d:"据称",lang:"en"},
 {w:"stringent",d:"严格",lang:"en"},
-{w:"結構",d:"美好的",lang:"zh"},
+{w:"結構",d:"美好的",lang:"ja"},
 {w:"guzzle",d:"咕噜",lang:"en"},
 {w:"cobalt",d:"钴",lang:"en"},
 {w:"abundance",d:"丰富",lang:"en"},
 {w:"affiliate",d:"附属公司",lang:"en"},
 {w:"ぴったしぶり",d:"好久不见",lang:"ja"},
-{w:"刑務所",d:"监狱",lang:"zh"},
+{w:"刑務所",d:"监狱",lang:"ja"},
 {w:"torpedo",d:"鱼雷",lang:"en"},
 {w:"次第で",d:"根据",lang:"ja"},
 {w:"たとたん",d:"立刻",lang:"ja"},
@@ -1162,7 +1162,7 @@ const BUILTIN = [
 {w:"frantically",d:"疯狂地",lang:"en"},
 {w:"desperately",d:"绝望地",lang:"en"},
 {w:"pitiable",d:"可怜的",lang:"en"},
-{w:"経験",d:"经验",lang:"zh"},
+{w:"経験",d:"经验",lang:"ja"},
 {w:"ままだ",d:"仍然",lang:"ja"},
 {w:"fort",d:"堡",lang:"en"},
 {w:"びくり",d:"惊喜",lang:"ja"},
@@ -1222,7 +1222,7 @@ const BUILTIN = [
 {w:"deteriorate",d:"恶化",lang:"en"},
 {w:"monolithic franchise",d:"整体特许经营",lang:"en"},
 {w:"brandishing",d:"挥舞",lang:"en"},
-{w:"適切",d:"合适的",lang:"zh"},
+{w:"適切",d:"合适的",lang:"ja"},
 {w:"悲しい",d:"伤心",lang:"ja"},
 {w:"reactionary",d:"反动",lang:"en"},
 {w:"facilitate",d:"促进",lang:"en"},
@@ -1404,7 +1404,7 @@ const BUILTIN = [
 {w:"ことわざ",d:"谚语",lang:"ja"},
 {w:"martial",d:"武术",lang:"en"},
 {w:"govern",d:"治理",lang:"en"},
-{w:"食事",d:"一顿饭",lang:"zh"},
+{w:"食事",d:"一顿饭",lang:"ja"},
 {w:"dentistry",d:"牙科",lang:"en"},
 {w:"comfy",d:"舒适",lang:"en"},
 {w:"Temporarily",d:"暂时地",lang:"en"},
@@ -1667,7 +1667,7 @@ const BUILTIN = [
 {w:"howl",d:"嚎",lang:"en"},
 {w:"colloquial",d:"口语化的",lang:"en"},
 {w:"doppelganger",d:"分身",lang:"en"},
-{w:"omedeto",d:"恭喜",lang:"en"},
+{w:"omedeto",d:"恭喜",lang:"ja"},
 {w:"なみだ",d:"眼泪",lang:"ja"},
 {w:"jog",d:"慢跑",lang:"en"},
 {w:"むかし",d:"long ago",lang:"ja"},
@@ -1691,7 +1691,7 @@ const BUILTIN = [
 {w:"gift certificate",d:"礼券",lang:"en"},
 {w:"ぶつかる",d:"碰撞",lang:"ja"},
 {w:"jackpot",d:"大奖",lang:"en"},
-{w:"試合",d:"游戏",lang:"zh"},
+{w:"試合",d:"游戏",lang:"ja"},
 {w:"medallions",d:"奖章",lang:"en"},
 {w:"skateboard",d:"滑板",lang:"en"},
 {w:"humidity",d:"湿度",lang:"en"},
@@ -1704,7 +1704,7 @@ const BUILTIN = [
 {w:"sprout",d:"发芽",lang:"en"},
 {w:"らくなの",d:"简单的",lang:"ja"},
 {w:"おかしい",d:"奇怪的",lang:"ja"},
-{w:"実家",d:"父母家",lang:"zh"},
+{w:"実家",d:"父母家",lang:"ja"},
 {w:"ごみ",d:"垃圾",lang:"ja"},
 {w:"同じ",d:"相同的",lang:"ja"},
 {w:"receipt",d:"收据",lang:"en"},
@@ -1777,12 +1777,12 @@ const BUILTIN = [
 {w:"enroll",d:"注册",lang:"en"},
 {w:"jumble",d:"搀杂",lang:"en"},
 {w:"aggregation",d:"聚合",lang:"en"},
-{w:"hold back",d:"憋",lang:"en"},
+{w:"hold back",d:"憋",lang:"ja"},
 {w:"lantern",d:"灯笼",lang:"en"},
 {w:"ずうずうしい",d:"厚颜无耻",lang:"ja"},
 {w:"impudent",d:"厚颜无耻",lang:"en"},
 {w:"coincidentally",d:"巧合的是",lang:"en"},
-{w:"stretch out",d:"伸展",lang:"en"},
+{w:"stretch out",d:"伸展",lang:"ja"},
 {w:"ludicrous",d:"荒谬",lang:"en"},
 {w:"おやすみ",d:"晚安",lang:"ja"},
 {w:"逃跑",d:"逃げる",lang:"zh"},
@@ -1871,7 +1871,7 @@ const BUILTIN = [
 {w:"Australopithecus",d:"南方古猿",lang:"en"},
 {w:"perchance",d:"或许",lang:"en"},
 {w:"virility",d:"男子气概",lang:"en"},
-{w:"場所",d:"地方",lang:"zh"},
+{w:"場所",d:"地方",lang:"ja"},
 {w:"ちさい",d:"小的",lang:"ja"},
 {w:"くに",d:"国家",lang:"ja"},
 {w:"やった",d:"我做到了",lang:"ja"},
@@ -1895,7 +1895,7 @@ const BUILTIN = [
 {w:"steep",d:"陡",lang:"en"},
 {w:"Channelers",d:"通灵者",lang:"en"},
 {w:"BOW",d:"弓",lang:"en"},
-{w:"夜型",d:"猫头鹰",lang:"zh"},
+{w:"夜型",d:"猫头鹰",lang:"ja"},
 {w:"curfew",d:"宵禁",lang:"en"},
 {w:"exhaust case",d:"排气箱",lang:"en"},
 {w:"vulgar",d:"庸俗",lang:"en"},
@@ -1914,7 +1914,7 @@ const BUILTIN = [
 {w:"quintessential",d:"精髓",lang:"en"},
 {w:"detriment",d:"损害",lang:"en"},
 {w:"slurp of the drink",d:"喝一口饮料",lang:"en"},
-{w:"creep out",d:"爬出来",lang:"en"},
+{w:"creep out",d:"爬出来",lang:"ja"},
 {w:"dabbled in",d:"涉足",lang:"en"},
 {w:"aggrandizing",d:"夸大其词",lang:"en"},
 {w:"correspond",d:"对应",lang:"en"},
@@ -2354,7 +2354,7 @@ const BUILTIN = [
 {w:"v notch",d:"V 型缺口",lang:"en"},
 {w:"casting",d:"铸件",lang:"en"},
 {w:"discrete",d:"离散的",lang:"en"},
-{w:"大人",d:"成人",lang:"zh"},
+{w:"大人",d:"成人",lang:"ja"},
 {w:"volition",d:"意志",lang:"en"},
 {w:"stuff",d:"东西",lang:"en"},
 {w:"butcher",d:"屠夫",lang:"en"},
@@ -2399,7 +2399,7 @@ const BUILTIN = [
 {w:"unicorn",d:"独角兽",lang:"en"},
 {w:"squirtle",d:"杰尼龟",lang:"en"},
 {w:"awkward",d:"尴尬的",lang:"en"},
-{w:"arubaito",d:"兼职",lang:"en"},
+{w:"arubaito",d:"兼职",lang:"ja"},
 {w:"spice it",d:"调味",lang:"en"},
 {w:"surrogate",d:"代孕",lang:"en"},
 {w:"stem",d:"干",lang:"en"},
@@ -2428,7 +2428,7 @@ const BUILTIN = [
 {w:"assume",d:"认为",lang:"en"},
 {w:"destined",d:"注定",lang:"en"},
 {w:"purse",d:"钱包",lang:"en"},
-{w:"hasami",d:"剪刀",lang:"en"},
+{w:"hasami",d:"剪刀",lang:"ja"},
 {w:"disingenuous",d:"不诚实的",lang:"en"},
 {w:"past tense",d:"过去式",lang:"en"},
 {w:"spoiler guy",d:"剧透者",lang:"en"},
@@ -2438,46 +2438,46 @@ const BUILTIN = [
 {w:"hypocrite",d:"伪君子",lang:"en"},
 {w:"constitution",d:"宪法",lang:"en"},
 {w:"お兄さん",d:"哥哥",lang:"ja"},
-{w:"nezumi",d:"鼠",lang:"en"},
+{w:"nezumi",d:"鼠",lang:"ja"},
 {w:"starcraft",d:"星际争霸",lang:"en"},
 {w:"ransom",d:"赎金",lang:"en"},
 {w:"kidnap",d:"绑架",lang:"en"},
 {w:"hanging out",d:"闲逛",lang:"en"},
-{w:"sigoto",d:"工作",lang:"en"},
+{w:"sigoto",d:"工作",lang:"ja"},
 {w:"赤ちゃん",d:"婴儿",lang:"ja"},
 {w:"deceptively",d:"欺骗性地",lang:"en"},
-{w:"amai",d:"甜的",lang:"en"},
+{w:"amai",d:"甜的",lang:"ja"},
 {w:"sour",d:"酸的",lang:"en"},
 {w:"pun",d:"双关语",lang:"en"},
-{w:"sizuka",d:"安静的",lang:"en"},
+{w:"sizuka",d:"安静的",lang:"ja"},
 {w:"arrogant",d:"傲慢的",lang:"en"},
 {w:"mumbling",d:"喃喃自语",lang:"en"},
 {w:"politeness",d:"礼貌",lang:"en"},
 {w:"casual",d:"随意的",lang:"en"},
 {w:"stuffy",d:"闷",lang:"en"},
-{w:"hamachi",d:"黄尾鱼",lang:"en"},
+{w:"hamachi",d:"黄尾鱼",lang:"ja"},
 {w:"rant",d:"咆哮",lang:"en"},
 {w:"tumor",d:"瘤",lang:"en"},
 {w:"plurals",d:"复数",lang:"en"},
 {w:"spray",d:"喷",lang:"en"},
-{w:"makura",d:"枕头",lang:"en"},
+{w:"makura",d:"枕头",lang:"ja"},
 {w:"adjective",d:"形容词",lang:"en"},
 {w:"hilarious",d:"搞笑",lang:"en"},
-{w:"ninjin",d:"胡萝卜",lang:"en"},
-{w:"dare desu ga",d:"是谁？",lang:"en"},
-{w:"dare",d:"WHO",lang:"en"},
-{w:"tomodachi",d:"朋友",lang:"en"},
-{w:"kanojo",d:"她",lang:"en"},
-{w:"kare",d:"他",lang:"en"},
+{w:"ninjin",d:"胡萝卜",lang:"ja"},
+{w:"dare desu ga",d:"是谁？",lang:"ja"},
+{w:"dare",d:"WHO",lang:"ja"},
+{w:"tomodachi",d:"朋友",lang:"ja"},
+{w:"kanojo",d:"她",lang:"ja"},
+{w:"kare",d:"他",lang:"ja"},
 {w:"possession",d:"拥有",lang:"en"},
-{w:"usagi",d:"兔子",lang:"en"},
+{w:"usagi",d:"兔子",lang:"ja"},
 {w:"split",d:"分裂",lang:"en"},
-{w:"yubi",d:"手指",lang:"en"},
-{w:"ringo",d:"apple",lang:"en"},
-{w:"yasai",d:"蔬菜",lang:"en"},
-{w:"haburashi",d:"牙刷",lang:"en"},
-{w:"te",d:"手",lang:"en"},
-{w:"atama",d:"头",lang:"en"},
+{w:"yubi",d:"手指",lang:"ja"},
+{w:"ringo",d:"apple",lang:"ja"},
+{w:"yasai",d:"蔬菜",lang:"ja"},
+{w:"haburashi",d:"牙刷",lang:"ja"},
+{w:"te",d:"手",lang:"ja"},
+{w:"atama",d:"头",lang:"ja"},
 {w:"composure",d:"镇静",lang:"en"},
 {w:"slots",d:"插槽",lang:"en"},
 {w:"sprawl",d:"蔓延",lang:"en"},
@@ -3449,7 +3449,7 @@ const BUILTIN = [
 {w:"flourish",d:"繁荣",lang:"en"},
 {w:"sovereign",d:"主权的",lang:"en"},
 {w:"liberate",d:"解放",lang:"en"},
-{w:"enomous",d:"巨大的",lang:"en"}
+{w:"enomous",d:"巨大的",lang:"en"},
 ];
 
 const STORAGE_KEY='studyapp_words';
@@ -3596,23 +3596,49 @@ document.querySelectorAll('.lang-tab').forEach(tab=>{
 
 // ── TTS ──
 const LANG_TTS={en:'en-US',ja:'ja-JP',zh:'zh-CN'};
-const LANG_RATE={en:0.9,ja:0.85,zh:0.9};
+const LANG_RATE={en:0.88,ja:0.82,zh:0.88};
+
+// 缓存已加载的声音列表，避免重复查找
+let _voiceCache=null;
+function getVoices(){
+  if(_voiceCache&&_voiceCache.length)return _voiceCache;
+  _voiceCache=window.speechSynthesis.getVoices();
+  return _voiceCache;
+}
+
+// 按语言选择最佳 iOS 原生声音
+function pickVoice(lang){
+  const voices=getVoices();
+  const targetLang=LANG_TTS[lang]||'en-US';
+  const langPrefix=targetLang.split('-')[0]; // 'en'/'ja'/'zh'
+
+  // iOS 优质声音优先级列表
+  const PREFERRED={
+    'en-US':['Samantha','Karen','Moira','Tessa','Veena'],
+    'ja-JP':['O-ren','Kyoko','Otoya'],
+    'zh-CN':['Ting-Ting','Sin-ji','Mei-Jia'],
+  };
+  const prefs=PREFERRED[targetLang]||[];
+
+  // 1. 精确匹配语言 + 优选名字
+  let v=voices.find(v=>v.lang===targetLang&&prefs.some(p=>v.name.includes(p)));
+  // 2. 精确匹配语言（任意声音）
+  if(!v)v=voices.find(v=>v.lang===targetLang);
+  // 3. 前缀匹配（如 ja-JP 没有时用 ja）
+  if(!v)v=voices.find(v=>v.lang.startsWith(langPrefix));
+  return v||null;
+}
+
 function speakWord(){
   if(currentIdx<0)return;
   const item=allWords[currentIdx];
   window.speechSynthesis.cancel();
   const utter=new SpeechSynthesisUtterance(item.w);
   utter.lang=LANG_TTS[item.lang]||'en-US';
-  utter.rate=LANG_RATE[item.lang]||0.9;
+  utter.rate=LANG_RATE[item.lang]||0.88;
   utter.pitch=1.0;
-  const voices=window.speechSynthesis.getVoices();
-  const preferred=voices.find(v=>v.lang===utter.lang&&
-    (v.name.includes('Kyoko')||v.name.includes('Samantha')||
-     v.name.includes('Daniel')||v.name.includes('Enhanced')||
-     v.name.includes('Natural')))||
-    voices.find(v=>v.lang===utter.lang)||
-    voices.find(v=>v.lang.startsWith(item.lang==='zh'?'zh':item.lang==='ja'?'ja':'en'));
-  if(preferred)utter.voice=preferred;
+  const voice=pickVoice(item.lang);
+  if(voice)utter.voice=voice;
   const btn=document.getElementById('sound-btn');
   utter.onstart=()=>btn&&btn.classList.add('speaking');
   utter.onend=()=>btn&&btn.classList.remove('speaking');
@@ -3743,7 +3769,11 @@ function init(){
     if(document.hidden)window.speechSynthesis.cancel();
   });
   // 预加载语音列表（iOS 需要）
-  window.speechSynthesis.onvoiceschanged=()=>{};
+  // 预热声音列表，iOS 上需要在 onvoiceschanged 后才能获取
+  window.speechSynthesis.onvoiceschanged=()=>{
+    _voiceCache=window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged=null;
+  };
   window.speechSynthesis.getVoices();
 }
 
