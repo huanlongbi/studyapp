@@ -1,4 +1,4 @@
-const CACHE = 'studyapp-v3';
+const CACHE = 'studyapp-v4';
 const ASSETS = ['./Study.html', './manifest.json', './icon.svg'];
 
 // 安装时预缓存所有静态资源

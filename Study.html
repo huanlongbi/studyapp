@@ -3615,23 +3615,19 @@ function getVoices(){
 function pickVoice(lang){
   const voices=getVoices();
   const targetLang=LANG_TTS[lang]||'en-US';
-  const langPrefix=targetLang.split('-')[0]; // 'en'/'ja'/'zh'
+  const langPrefix=targetLang.split('-')[0];
 
-  // iOS 优质声音优先级列表
-  const PREFERRED={
-    'en-US':['Samantha','Karen','Moira','Tessa','Veena'],
-    'ja-JP':['O-ren','Kyoko','Otoya'],
-    'zh-CN':['Ting-Ting','Sin-ji','Mei-Jia'],
-  };
-  const prefs=PREFERRED[targetLang]||[];
+  // 该语言的所有声音
+  const langVoices=voices.filter(v=>v.lang===targetLang||v.lang.startsWith(langPrefix));
 
-  // 1. 精确匹配语言 + 优选名字
-  let v=voices.find(v=>v.lang===targetLang&&prefs.some(p=>v.name.includes(p)));
-  // 2. 精确匹配语言（任意声音）
-  if(!v)v=voices.find(v=>v.lang===targetLang);
-  // 3. 前缀匹配（如 ja-JP 没有时用 ja）
-  if(!v)v=voices.find(v=>v.lang.startsWith(langPrefix));
-  return v||null;
+  // 排序：Enhanced/Premium 排前，Kyoko/Standard 排后
+  langVoices.sort((a,b)=>{
+    const aEnhanced=/enhanced|premium|o-ren|oren|otoya|samantha|karen/i.test(a.name)?0:1;
+    const bEnhanced=/enhanced|premium|o-ren|oren|otoya|samantha|karen/i.test(b.name)?0:1;
+    return aEnhanced-bEnhanced;
+  });
+
+  return langVoices[0]||null;
 }
 
 let _toastTimer=null;
@@ -3655,7 +3651,9 @@ function speakWord(){
   const voice=pickVoice(item.lang);
   if(voice){
     utter.voice=voice;
-    showToast('🔊 '+voice.name);
+    // 调试：显示完整声音名，确认是否用到 Enhanced
+    const allJa=getVoices().filter(v=>v.lang.startsWith('ja')).map(v=>v.name).join(' | ');
+    showToast(item.lang==='ja'?`🔊 ${voice.name}（所有日语：${allJa||'无'}）`:`🔊 ${voice.name}`);
   } else if(item.lang==='ja'){
     showToast('⚠️ 未找到日语声音 → 设置 > 辅助功能 > 朗读内容 > 声音 > 日语 > 下载',true);
   }
