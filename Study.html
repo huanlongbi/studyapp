@@ -63,7 +63,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 #back-reading{font-size:13px;color:var(--text3);align-self:flex-start;margin-bottom:2px;letter-spacing:1px}
 #back-pos{font-size:12px;color:var(--accent);font-weight:600;align-self:flex-start;margin:4px 0 10px;background:rgba(108,99,255,.15);padding:3px 10px;border-radius:8px;display:none}
 /* 多义词列表 */
-#back-definitions{width:100%;align-self:flex-start;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:200px}
+#back-definitions{width:100%;align-self:flex-start;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:200px;scrollbar-width:none}
+#back-definitions::-webkit-scrollbar{display:none}
 .def-item{display:flex;flex-direction:column;gap:2px}
 .def-pos{font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
 .def-text{font-size:clamp(16px,4.5vw,22px);font-weight:700;color:var(--text);line-height:1.35;letter-spacing:-0.2px}
@@ -3540,22 +3541,27 @@ function renderDefinitions(item, dictData){
   const container=document.getElementById('back-definitions');
   container.innerHTML='';
 
-  // 优先用 API 数据，否则用内置数据
-  if(dictData?.meanings?.length){
-    dictData.meanings.forEach(m=>{
-      m.defs.forEach(def=>{
+  // 主释义：始终显示内置中文释义
+  const mainEl=document.createElement('div');
+  mainEl.className='def-item';
+  mainEl.innerHTML=`<span class="def-text">${item.defClean||item.d}</span>`;
+  container.appendChild(mainEl);
+
+  // 英语补充：最多显示2条英文 API 释义
+  if(item.lang==='en'&&dictData?.meanings?.length){
+    let count=0;
+    outer:for(const m of dictData.meanings){
+      for(const def of m.defs){
+        if(count>=2)break outer;
         const el=document.createElement('div');
         el.className='def-item';
+        el.style.opacity='0.65';
         el.innerHTML=(m.pos?`<span class="def-pos">${m.pos}</span>`:'')
           +`<span class="def-text">${def}</span>`;
         container.appendChild(el);
-      });
-    });
-  } else {
-    const el=document.createElement('div');
-    el.className='def-item';
-    el.innerHTML=`<span class="def-text">${item.defClean||item.d}</span>`;
-    container.appendChild(el);
+        count++;
+      }
+    }
   }
 }
 
@@ -3584,7 +3590,7 @@ function showCard(idx){
   // 背面基础内容
   document.getElementById('back-word').textContent=item.w;
   const readingEl=document.getElementById('back-reading');
-  readingEl.textContent=item.lang==='ja'&&item.r?item.r:'';
+  readingEl.textContent=(item.lang==='ja'&&item.r&&item.r!==item.w)?item.r:'';
   const posEl=document.getElementById('back-pos');
   posEl.style.display='none';
   renderDefinitions(item, null);
