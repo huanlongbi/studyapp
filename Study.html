@@ -10001,7 +10001,7 @@ function renderDefinitions(item, dictData){
 
 // ── 渲染 ──
 const BADGE_MAP={en:{cls:'badge-en',txt:'英'},ja:{cls:'badge-ja',txt:'日'},zh:{cls:'badge-zh',txt:'中'}};
-function showCard(idx){
+function showCard(idx,silent=false){
   if(idx<0||idx>=allWords.length){showEmpty();return}
   currentIdx=idx;
   isFlipped=false;
@@ -10046,7 +10046,7 @@ function showCard(idx){
   void scene.offsetWidth;
   scene.classList.add('card-animate');
   updateDashboard();
-  speakWord();
+  if(!silent) speakWord();
 }
 function showEmpty(){
   document.getElementById('flashcard').style.display='none';
@@ -10054,10 +10054,20 @@ function showEmpty(){
   document.getElementById('action-area').style.display='none';
   updateDashboard();
 }
+function getFilteredTotal(){
+  return allWords.filter(item=>{
+    if(langFilter!=='all'&&item.lang!==langFilter) return false;
+    if(item.lang==='ja'){
+      const lvl=item.jlpt||'custom';
+      if(!jlptFilter.has(lvl)) return false;
+    }
+    return true;
+  }).length;
+}
 function updateDashboard(){
-  const total=allWords.length;
-  const mastered=masteredSet.size;
-  const remaining=pool.filter(i=>!masteredSet.has(allWords[i].w)).length;
+  const total=getFilteredTotal();
+  const remaining=pool.length;
+  const mastered=total-remaining;
   document.getElementById('progress-text').innerHTML=
     `待学：<span>${remaining}</span> / ${total}`;
   const pct=total>0?(mastered/total)*100:0;
@@ -10103,9 +10113,17 @@ function resetMastered(){
 document.querySelectorAll('.lang-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     langFilter=tab.dataset.filter;
-    document.querySelectorAll('.lang-tab').forEach(t=>{
-      t.className='lang-tab';
-    });
+    document.querySelectorAll('.lang-tab').forEach(t=>{t.className='lang-tab';});
+    const cls=langFilter==='en'?'active-en':langFilter==='ja'?'active-ja':'active-all';
+    tab.classList.add(cls);
+    buildPool();
+    updateDashboard();
+    if(pool.length){showMainUI();showCard(pool[Math.floor(Math.random()*pool.length)],true);}
+    else{showEmpty();}
+  });
+});
+
+// ── JLPT 等级筛选 ──
 document.querySelectorAll('.jlpt-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     const lv=tab.dataset.jlpt;
@@ -10118,15 +10136,9 @@ document.querySelectorAll('.jlpt-tab').forEach(tab=>{
       t.classList.toggle('active',jlptFilter.has(t.dataset.jlpt));
     });
     buildPool();
-    if(pool.length) showCard(pool[Math.floor(Math.random()*pool.length)]);
-    else showEmpty();
-  });
-});
-    const cls=langFilter==='en'?'active-en':langFilter==='ja'?'active-ja':'active-all';
-    tab.classList.add(cls);
-    buildPool();
-    if(pool.length){showMainUI();showCard(pool[Math.floor(Math.random()*pool.length)])}
-    else{showEmpty()}
+    updateDashboard();
+    if(pool.length){showMainUI();showCard(pool[Math.floor(Math.random()*pool.length)],true);}
+    else{showEmpty();}
   });
 });
 
