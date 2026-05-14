@@ -96,6 +96,10 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .sheet-btn-load{background:var(--accent);color:#fff}
 .sheet-btn-load:disabled{opacity:.4;pointer-events:none}
 @keyframes fadeSlideIn{from{opacity:0;transform:translateY(10px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* 语音诊断 Toast */
+#voice-toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%);background:rgba(20,20,35,.95);border:1px solid var(--border);border-radius:12px;padding:9px 16px;font-size:12px;color:var(--text2);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s;z-index:200;max-width:90vw;text-align:center}
+#voice-toast.show{opacity:1}
+#voice-toast.warn{border-color:var(--red);color:#ff8c8c}
 .card-animate{animation:fadeSlideIn .28s cubic-bezier(0.23,1,0.32,1) both}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
 .speaking{animation:pulse .6s ease infinite}
@@ -147,6 +151,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
   </div>
 
+  <div id="voice-toast"></div>
   <div id="action-area" style="display:none">
     <button class="btn btn-skip" onclick="skipWord()"><span>↷</span> 换一个</button>
     <button class="btn btn-master" onclick="masterWord()"><span>✓</span> 掌握了</button>
@@ -3629,6 +3634,16 @@ function pickVoice(lang){
   return v||null;
 }
 
+let _toastTimer=null;
+function showToast(msg,warn=false){
+  const el=document.getElementById('voice-toast');
+  if(!el)return;
+  clearTimeout(_toastTimer);
+  el.textContent=msg;
+  el.className=warn?'warn show':'show';
+  _toastTimer=setTimeout(()=>el.className='',2800);
+}
+
 function speakWord(){
   if(currentIdx<0)return;
   const item=allWords[currentIdx];
@@ -3638,7 +3653,12 @@ function speakWord(){
   utter.rate=LANG_RATE[item.lang]||0.88;
   utter.pitch=1.0;
   const voice=pickVoice(item.lang);
-  if(voice)utter.voice=voice;
+  if(voice){
+    utter.voice=voice;
+    showToast('🔊 '+voice.name);
+  } else if(item.lang==='ja'){
+    showToast('⚠️ 未找到日语声音 → 设置 > 辅助功能 > 朗读内容 > 声音 > 日语 > 下载',true);
+  }
   const btn=document.getElementById('sound-btn');
   utter.onstart=()=>btn&&btn.classList.add('speaking');
   utter.onend=()=>btn&&btn.classList.remove('speaking');
