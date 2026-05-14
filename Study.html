@@ -55,11 +55,18 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .sound-btn{position:absolute;top:12px;right:12px;width:48px;height:48px;border-radius:50%;background:rgba(108,99,255,.18);border:1.5px solid rgba(108,99,255,.4);color:var(--accent2);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:2;-webkit-tap-highlight-color:transparent}
 .sound-btn:active{transform:scale(0.85);background:var(--accent);color:#fff}
 #word-display{font-size:clamp(28px,8vw,44px);font-weight:800;letter-spacing:-1px;text-align:center;color:var(--text);line-height:1.15;word-break:break-word;margin-top:8px}
-#phonetic-display{margin-top:8px;font-size:15px;color:var(--text3);letter-spacing:0.5px;font-style:italic;min-height:20px}
+/* 正面：音标 / 平假名 */
+#phonetic-display{margin-top:6px;font-size:16px;color:var(--accent2);letter-spacing:1px;min-height:22px;font-style:normal}
 .tap-hint{position:absolute;bottom:16px;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3)}
+/* 背面 */
 #back-word{font-size:17px;font-weight:700;color:var(--accent2);letter-spacing:-0.3px;align-self:flex-start;margin-top:4px}
-#back-pos{font-size:12px;color:var(--accent);font-weight:600;align-self:flex-start;margin:5px 0 12px;background:rgba(108,99,255,.15);padding:3px 10px;border-radius:8px;display:none}
-#back-definition{font-size:clamp(20px,5.5vw,28px);font-weight:700;color:var(--text);line-height:1.4;text-align:left;align-self:flex-start;letter-spacing:-0.3px}
+#back-reading{font-size:13px;color:var(--text3);align-self:flex-start;margin-bottom:2px;letter-spacing:1px}
+#back-pos{font-size:12px;color:var(--accent);font-weight:600;align-self:flex-start;margin:4px 0 10px;background:rgba(108,99,255,.15);padding:3px 10px;border-radius:8px;display:none}
+/* 多义词列表 */
+#back-definitions{width:100%;align-self:flex-start;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:200px}
+.def-item{display:flex;flex-direction:column;gap:2px}
+.def-pos{font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.def-text{font-size:clamp(16px,4.5vw,22px);font-weight:700;color:var(--text);line-height:1.35;letter-spacing:-0.2px}
 #empty-state{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px 30px;text-align:center}
 #empty-state .trophy{font-size:60px}
 #empty-state h2{font-size:22px;font-weight:800}
@@ -145,8 +152,9 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       </div>
       <div class="card-face card-back">
         <div id="back-word"></div>
+        <div id="back-reading"></div>
         <div id="back-pos"></div>
-        <div id="back-definition"></div>
+        <div id="back-definitions"></div>
       </div>
     </div>
   </div>
@@ -177,9 +185,9 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 const BUILTIN = [
 {w:"refreshing",d:"令人耳目一新",lang:"en"},
 {w:"severe",d:"严重",lang:"en"},
-{w:"差し込む",d:"插入",lang:"ja"},
+{w:"差し込む",d:"插入",lang:"ja",r:"さしこむ"},
 {w:"sly",d:"狡猾",lang:"en"},
-{w:"含まれている",d:"包括",lang:"ja"},
+{w:"含まれている",d:"包括",lang:"ja",r:"ふくまれている"},
 {w:"stewardess",d:"空中小姐",lang:"en"},
 {w:"しやすく",d:"简单的",lang:"ja"},
 {w:"referee",d:"裁判",lang:"en"},
@@ -199,7 +207,7 @@ const BUILTIN = [
 {w:"hindrance",d:"障碍",lang:"en"},
 {w:"emblem",d:"徽",lang:"en"},
 {w:"しゃっくり",d:"打嗝",lang:"ja"},
-{w:"恨む",d:"怨恨",lang:"ja"},
+{w:"恨む",d:"怨恨",lang:"ja",r:"うらむ"},
 {w:"piddling",d:"小打小闹",lang:"en"},
 {w:"hiccup",d:"打嗝",lang:"en"},
 {w:"train conductor",d:"列车长",lang:"en"},
@@ -270,11 +278,11 @@ const BUILTIN = [
 {w:"acidity",d:"酸度",lang:"en"},
 {w:"seat cushion",d:"座垫",lang:"en"},
 {w:"chitchat",d:"闲谈",lang:"en"},
-{w:"激しい。。",d:"激烈的..",lang:"ja"},
+{w:"激しい。。",d:"激烈的..",lang:"ja",r:"はげしい。。"},
 {w:"concrete",d:"混凝土",lang:"en"},
 {w:"bliss",d:"福佑",lang:"en"},
 {w:"timber",d:"木材",lang:"en"},
-{w:"生まれつき",d:"出生",lang:"ja"},
+{w:"生まれつき",d:"出生",lang:"ja",r:"うまれつき"},
 {w:"cabin",d:"小屋",lang:"en"},
 {w:"cork",d:"软木塞",lang:"en"},
 {w:"ぴったり",d:"完美的",lang:"ja"},
@@ -385,9 +393,9 @@ const BUILTIN = [
 {w:"defect",d:"缺陷",lang:"en"},
 {w:"fur",d:"毛皮",lang:"en"},
 {w:"bulletin board",d:"公告板",lang:"en"},
-{w:"繰り返す",d:"重复",lang:"ja"},
+{w:"繰り返す",d:"重复",lang:"ja",r:"くりかえす"},
 {w:"chrysanthemum",d:"菊花",lang:"en"},
-{w:"綿あめ",d:"棉花糖",lang:"ja"},
+{w:"綿あめ",d:"棉花糖",lang:"ja",r:"めんあめ"},
 {w:"cryptic",d:"神秘的",lang:"en"},
 {w:"crux",d:"关键",lang:"en"},
 {w:"demise",d:"死亡",lang:"en"},
@@ -517,7 +525,7 @@ const BUILTIN = [
 {w:"riot",d:"暴动",lang:"en"},
 {w:"crane",d:"起重机",lang:"en"},
 {w:"うなぎ",d:"鳗鱼",lang:"ja"},
-{w:"太字",d:"大胆的",lang:"ja"},
+{w:"太字",d:"大胆的",lang:"ja",r:"ふとじ"},
 {w:"deliberately",d:"故意地",lang:"en"},
 {w:"newscum",d:"新闻界",lang:"en"},
 {w:"astonishing",d:"惊人",lang:"en"},
@@ -532,7 +540,7 @@ const BUILTIN = [
 {w:"hook up with",d:"勾搭",lang:"en"},
 {w:"disturbance",d:"干扰",lang:"en"},
 {w:"Heritage",d:"遗产",lang:"en"},
-{w:"いつも言ってるでしょう",d:"你总是这么说",lang:"ja"},
+{w:"いつも言ってるでしょう",d:"你总是这么说",lang:"ja",r:"いつもいってるでしょう"},
 {w:"imperative",d:"至关重要的",lang:"en"},
 {w:"colugos",d:"鼯猴",lang:"en"},
 {w:"lick",d:"舔",lang:"en"},
@@ -551,8 +559,8 @@ const BUILTIN = [
 {w:"monstrosity",d:"怪物",lang:"en"},
 {w:"kowtow",d:"磕头",lang:"en"},
 {w:"safari",d:"狩猎旅行",lang:"en"},
-{w:"謝る",d:"道歉",lang:"ja"},
-{w:"晴れる",d:"sunny",lang:"ja"},
+{w:"謝る",d:"道歉",lang:"ja",r:"あやまる"},
+{w:"晴れる",d:"sunny",lang:"ja",r:"はれる"},
 {w:"slayer",d:"屠夫",lang:"en"},
 {w:"felony",d:"重罪",lang:"en"},
 {w:"centrifuge",d:"离心机",lang:"en"},
@@ -560,9 +568,9 @@ const BUILTIN = [
 {w:"pedestal fan",d:"落地扇",lang:"en"},
 {w:"complementary",d:"补充",lang:"en"},
 {w:"irrigation",d:"灌溉",lang:"en"},
-{w:"相手",d:"伙伴",lang:"ja"},
-{w:"仲間",d:"同伴",lang:"ja"},
-{w:"涙",d:"眼泪",lang:"ja"},
+{w:"相手",d:"伙伴",lang:"ja",r:"あいて"},
+{w:"仲間",d:"同伴",lang:"ja",r:"なかま"},
+{w:"涙",d:"眼泪",lang:"ja",r:"なみだ"},
 {w:"legacy",d:"遗产",lang:"en"},
 {w:"protocol",d:"协议",lang:"en"},
 {w:"intuitive",d:"直觉的",lang:"en"},
@@ -570,7 +578,7 @@ const BUILTIN = [
 {w:"やわらか",d:"柔软的",lang:"ja"},
 {w:"provision",d:"供应",lang:"en"},
 {w:"rampant",d:"猖獗",lang:"en"},
-{w:"仲直り",d:"和解",lang:"ja"},
+{w:"仲直り",d:"和解",lang:"ja",r:"なかなおり"},
 {w:"fabric",d:"布",lang:"en"},
 {w:"mild",d:"温和的",lang:"en"},
 {w:"coronet",d:"冠冕",lang:"en"},
@@ -598,7 +606,7 @@ const BUILTIN = [
 {w:"cripple",d:"残废",lang:"en"},
 {w:"brunt of",d:"首当其冲",lang:"en"},
 {w:"わがままな",d:"自私",lang:"ja"},
-{w:"うわさ話",d:"闲话",lang:"ja"},
+{w:"うわさ話",d:"闲话",lang:"ja",r:"うわさはなし"},
 {w:"どんどん",d:"越来越多",lang:"ja"},
 {w:"surveillance",d:"监视",lang:"en"},
 {w:"spectator",d:"旁观者",lang:"en"},
@@ -613,7 +621,7 @@ const BUILTIN = [
 {w:"to be biased",d:"有偏见",lang:"en"},
 {w:"to harden",d:"硬化",lang:"en"},
 {w:"cassette",d:"磁带",lang:"en"},
-{w:"癖",d:"习惯",lang:"ja"},
+{w:"癖",d:"习惯",lang:"ja",r:"くせ"},
 {w:"nibbled",d:"轻咬",lang:"en"},
 {w:"熟的",d:"熟した",lang:"en"},
 {w:"ripened",d:"成熟的",lang:"en"},
@@ -639,10 +647,10 @@ const BUILTIN = [
 {w:"curricular activities",d:"课程活动",lang:"en"},
 {w:"hypothesis",d:"假设",lang:"en"},
 {w:"たまたま",d:"偶然",lang:"ja"},
-{w:"万引き",d:"商店行窃",lang:"ja"},
-{w:"離れて",d:"离开",lang:"ja"},
+{w:"万引き",d:"商店行窃",lang:"ja",r:"まんびき"},
+{w:"離れて",d:"离开",lang:"ja",r:"はなれて"},
 {w:"jurisdiction",d:"管辖权",lang:"en"},
-{w:"鏡",d:"镜子",lang:"ja"},
+{w:"鏡",d:"镜子",lang:"ja",r:"かがみ"},
 {w:"restlessly",d:"躁动不安",lang:"en"},
 {w:"stroll aimlessly",d:"漫无目的地闲逛",lang:"en"},
 {w:"stringy",d:"粘性的",lang:"en"},
@@ -672,14 +680,14 @@ const BUILTIN = [
 {w:"trespass",d:"侵入",lang:"en"},
 {w:"knoll",d:"小丘",lang:"en"},
 {w:"exaggerated",d:"夸张的",lang:"en"},
-{w:"問い合わせ",d:"询问",lang:"ja"},
+{w:"問い合わせ",d:"询问",lang:"ja",r:"といあわせ"},
 {w:"hospitality",d:"热情好客",lang:"en"},
 {w:"chimney",d:"烟囱",lang:"en"},
 {w:"protagonist",d:"主角",lang:"en"},
 {w:"horticulture",d:"园艺",lang:"en"},
 {w:"apron",d:"围裙",lang:"en"},
 {w:"etiquette",d:"礼仪",lang:"en"},
-{w:"悩むね",d:"这真是个难题。",lang:"ja"},
+{w:"悩むね",d:"这真是个难题。",lang:"ja",r:"なやむね"},
 {w:"ぐったり",d:"筋疲力尽的",lang:"ja"},
 {w:"ばったり",d:"偶然",lang:"ja"},
 {w:"すらっと",d:"苗条",lang:"ja"},
@@ -687,9 +695,9 @@ const BUILTIN = [
 {w:"ぽっちゃり",d:"胖乎乎的",lang:"ja"},
 {w:"すっきり",d:"干净清爽",lang:"ja"},
 {w:"てきぱき",d:"高效的",lang:"ja"},
-{w:"応じて",d:"根据",lang:"ja"},
+{w:"応じて",d:"根据",lang:"ja",r:"おうじて"},
 {w:"てたまらない",d:"我受不了了",lang:"ja"},
-{w:"偉そ",d:"傲慢的",lang:"ja"},
+{w:"偉そ",d:"傲慢的",lang:"ja",r:"えらそ"},
 {w:"やわらかい",d:"柔软的",lang:"ja"},
 {w:"grudge",d:"怨恨",lang:"en"},
 {w:"reverence",d:"尊敬",lang:"en"},
@@ -721,11 +729,11 @@ const BUILTIN = [
 {w:"tease",d:"挑逗",lang:"en"},
 {w:"mischief",d:"恶作剧",lang:"en"},
 {w:"fountain",d:"喷泉",lang:"en"},
-{w:"環境",d:"环境",lang:"ja"},
+{w:"環境",d:"环境",lang:"ja",r:"かんきょう"},
 {w:"すがた",d:"外貌",lang:"ja"},
 {w:"autobiography",d:"自传",lang:"en"},
-{w:"涼しい",d:"凉爽的",lang:"ja"},
-{w:"認め",d:"认可",lang:"ja"},
+{w:"涼しい",d:"凉爽的",lang:"ja",r:"すずしい"},
+{w:"認め",d:"认可",lang:"ja",r:"みとめ"},
 {w:"precarious",d:"岌岌可危",lang:"en"},
 {w:"choking",d:"窒息",lang:"en"},
 {w:"lashes out",d:"猛烈抨击",lang:"en"},
@@ -752,13 +760,13 @@ const BUILTIN = [
 {w:"channelizer cones",d:"导流锥",lang:"en"},
 {w:"cones",d:"圆锥体",lang:"en"},
 {w:"synagogue",d:"犹太教堂",lang:"en"},
-{w:"トレーニング",d:"训练",lang:"ja"},
+{w:"トレーニング",d:"训练",lang:"ja",r:"とれーにんぐ"},
 {w:"ablaze",d:"燃烧",lang:"en"},
-{w:"どら焼き",d:"铜锣烧",lang:"ja"},
+{w:"どら焼き",d:"铜锣烧",lang:"ja",r:"どらやき"},
 {w:"naughty",d:"淘气",lang:"en"},
-{w:"ソーセージ",d:"香肠",lang:"ja"},
+{w:"ソーセージ",d:"香肠",lang:"ja",r:"そーせーじ"},
 {w:"villain",d:"坏人",lang:"en"},
-{w:"珍しい",d:"稀有的",lang:"ja"},
+{w:"珍しい",d:"稀有的",lang:"ja",r:"めずらしい"},
 {w:"galley",d:"厨房",lang:"en"},
 {w:"price surge",d:"价格飙升",lang:"en"},
 {w:"price spike",d:"价格飙升",lang:"en"},
@@ -777,14 +785,14 @@ const BUILTIN = [
 {w:"to stroke",d:"抚摸",lang:"en"},
 {w:"futility",d:"无用",lang:"en"},
 {w:"daze",d:"发呆",lang:"en"},
-{w:"目が覚めた",d:"醒了",lang:"ja"},
+{w:"目が覚めた",d:"醒了",lang:"ja",r:"めがさめた"},
 {w:"to stare at",d:"盯着看",lang:"en"},
 {w:"charm",d:"魅力",lang:"en"},
 {w:"midsummer",d:"盛夏",lang:"en"},
 {w:"sponge",d:"海绵",lang:"en"},
 {w:"congestion",d:"拥塞",lang:"en"},
 {w:"とけ",d:"熔化",lang:"ja"},
-{w:"弱い",d:"虚弱的",lang:"ja"},
+{w:"弱い",d:"虚弱的",lang:"ja",r:"よわい"},
 {w:"hibernate",d:"冬眠",lang:"en"},
 {w:"dissidence",d:"异议",lang:"en"},
 {w:"おやじ",d:"爸爸",lang:"ja"},
@@ -820,7 +828,7 @@ const BUILTIN = [
 {w:"shipwreck graveyard",d:"沉船墓地",lang:"en"},
 {w:"shipwreck",d:"海难",lang:"en"},
 {w:"irritate",d:"刺激",lang:"en"},
-{w:"滅びる日",d:"毁灭之日",lang:"ja"},
+{w:"滅びる日",d:"毁灭之日",lang:"ja",r:"ほろびるにち"},
 {w:"handkerchief",d:"手帕",lang:"en"},
 {w:"runt",d:"矮子",lang:"en"},
 {w:"わざわざ",d:"故意地",lang:"ja"},
@@ -862,7 +870,7 @@ const BUILTIN = [
 {w:"suffocating",d:"令人窒息的",lang:"en"},
 {w:"stifling",d:"令人窒息",lang:"en"},
 {w:"gallant",d:"英勇",lang:"en"},
-{w:"慰める",d:"舒适",lang:"ja"},
+{w:"慰める",d:"舒适",lang:"ja",r:"なぐさめる"},
 {w:"ごぎぶり",d:"蟑螂",lang:"ja"},
 {w:"そっくり",d:"完全相同的",lang:"ja"},
 {w:"volatility",d:"挥发性",lang:"en"},
@@ -895,7 +903,7 @@ const BUILTIN = [
 {w:"excessive",d:"过多的",lang:"en"},
 {w:"listless",d:"懒洋洋",lang:"en"},
 {w:"languid",d:"慵懒的",lang:"en"},
-{w:"嵐",d:"风暴",lang:"ja"},
+{w:"嵐",d:"风暴",lang:"ja",r:"あらし"},
 {w:"sloppy",d:"邋遢",lang:"en"},
 {w:"creepy",d:"异样",lang:"en"},
 {w:"eerie",d:"怪异",lang:"en"},
@@ -929,7 +937,7 @@ const BUILTIN = [
 {w:"ethical",d:"伦理道德",lang:"en"},
 {w:"ephemeral",d:"短暂的",lang:"en"},
 {w:"fleeting",d:"短暂的",lang:"en"},
-{w:"私の地元ですから",d:"因为那是我的家乡",lang:"ja"},
+{w:"私の地元ですから",d:"因为那是我的家乡",lang:"ja",r:"わたしのじもとですから"},
 {w:"pessimist",d:"悲观主义者",lang:"en"},
 {w:"accountable",d:"问责制",lang:"en"},
 {w:"やせつつ",d:"减肥",lang:"ja"},
@@ -972,22 +980,22 @@ const BUILTIN = [
 {w:"barrel",d:"桶",lang:"en"},
 {w:"fiery",d:"火热",lang:"en"},
 {w:"よわい",d:"虚弱的",lang:"ja"},
-{w:"裏切る",d:"背叛",lang:"ja"},
-{w:"クレーマー",d:"抱怨者",lang:"ja"},
+{w:"裏切る",d:"背叛",lang:"ja",r:"うらぎる"},
+{w:"クレーマー",d:"抱怨者",lang:"ja",r:"くれーまー"},
 {w:"outlets",d:"商店",lang:"en"},
 {w:"masquerade",d:"化装舞会",lang:"en"},
-{w:"伝える",d:"告诉",lang:"ja"},
-{w:"告白する",d:"承认",lang:"ja"},
-{w:"案内",d:"指导",lang:"ja"},
-{w:"任せます",d:"就交给你了。",lang:"ja"},
+{w:"伝える",d:"告诉",lang:"ja",r:"つたえる"},
+{w:"告白する",d:"承认",lang:"ja",r:"こくはくする"},
+{w:"案内",d:"指导",lang:"ja",r:"あんない"},
+{w:"任せます",d:"就交给你了。",lang:"ja",r:"まかせます"},
 {w:"のことだし",d:"我的意思就是这样。",lang:"ja"},
-{w:"相手の",d:"对方的",lang:"ja"},
+{w:"相手の",d:"对方的",lang:"ja",r:"あいての"},
 {w:"によって",d:"经过",lang:"ja"},
 {w:"すべて",d:"全部",lang:"ja"},
-{w:"選択肢",d:"选择",lang:"ja"},
-{w:"に応じて",d:"根据",lang:"ja"},
-{w:"応援",d:"支持",lang:"ja"},
-{w:"恋人",d:"情人",lang:"ja"},
+{w:"選択肢",d:"选择",lang:"ja",r:"せんたくし"},
+{w:"に応じて",d:"根据",lang:"ja",r:"におうじて"},
+{w:"応援",d:"支持",lang:"ja",r:"おうえん"},
+{w:"恋人",d:"情人",lang:"ja",r:"こいびと"},
 {w:"outpace",d:"超过",lang:"en"},
 {w:"formidable",d:"强大",lang:"en"},
 {w:"backbreaking",d:"令人筋疲力尽",lang:"en"},
@@ -1021,9 +1029,9 @@ const BUILTIN = [
 {w:"parasite",d:"寄生虫",lang:"en"},
 {w:"depict",d:"描绘",lang:"en"},
 {w:"sabotage",d:"破坏",lang:"en"},
-{w:"に沿って",d:"沿着",lang:"ja"},
-{w:"に基づいて",d:"基于",lang:"ja"},
-{w:"美しい",d:"美丽的",lang:"ja"},
+{w:"に沿って",d:"沿着",lang:"ja",r:"にそって"},
+{w:"に基づいて",d:"基于",lang:"ja",r:"にもとづいて"},
+{w:"美しい",d:"美丽的",lang:"ja",r:"うつくしい"},
 {w:"adoption",d:"采用",lang:"en"},
 {w:"つまり",d:"换句话说",lang:"ja"},
 {w:"orthogonal",d:"正交",lang:"en"},
@@ -1070,7 +1078,7 @@ const BUILTIN = [
 {w:"mixture",d:"混合物",lang:"en"},
 {w:"sparse",d:"疏",lang:"en"},
 {w:"matrix",d:"矩阵",lang:"en"},
-{w:"緑",d:"绿色的",lang:"ja"},
+{w:"緑",d:"绿色的",lang:"ja",r:"みどり"},
 {w:"footage",d:"画面",lang:"en"},
 {w:"brevet",d:"特许状",lang:"en"},
 {w:"aisle",d:"走道",lang:"en"},
@@ -1090,10 +1098,10 @@ const BUILTIN = [
 {w:"standoff",d:"对峙",lang:"en"},
 {w:"polls show",d:"民调显示",lang:"en"},
 {w:"hoax",d:"骗局",lang:"en"},
-{w:"必ず",d:"一定",lang:"ja"},
-{w:"役に立つ",d:"有用",lang:"ja"},
+{w:"必ず",d:"一定",lang:"ja",r:"かならず"},
+{w:"役に立つ",d:"有用",lang:"ja",r:"やくにたつ"},
 {w:"いつか",d:"总有一天",lang:"ja"},
-{w:"紫",d:"紫色的",lang:"ja"},
+{w:"紫",d:"紫色的",lang:"ja",r:"むらさき"},
 {w:"intermittent",d:"间歇性的",lang:"en"},
 {w:"expat",d:"外籍人士",lang:"en"},
 {w:"kettle",d:"壶",lang:"en"},
@@ -1117,33 +1125,33 @@ const BUILTIN = [
 {w:"blanketing",d:"覆盖",lang:"en"},
 {w:"allegedly",d:"据称",lang:"en"},
 {w:"stringent",d:"严格",lang:"en"},
-{w:"結構",d:"美好的",lang:"ja"},
+{w:"結構",d:"美好的",lang:"ja",r:"けっこう"},
 {w:"guzzle",d:"咕噜",lang:"en"},
 {w:"cobalt",d:"钴",lang:"en"},
 {w:"abundance",d:"丰富",lang:"en"},
 {w:"affiliate",d:"附属公司",lang:"en"},
 {w:"ぴったしぶり",d:"好久不见",lang:"ja"},
-{w:"刑務所",d:"监狱",lang:"ja"},
+{w:"刑務所",d:"监狱",lang:"ja",r:"けいむしょ"},
 {w:"torpedo",d:"鱼雷",lang:"en"},
-{w:"次第で",d:"根据",lang:"ja"},
+{w:"次第で",d:"根据",lang:"ja",r:"しだいで"},
 {w:"たとたん",d:"立刻",lang:"ja"},
 {w:"tangible",d:"有形",lang:"en"},
 {w:"mood",d:"情绪",lang:"en"},
 {w:"voucher",d:"代金券",lang:"en"},
 {w:"outage",d:"停电",lang:"en"},
-{w:"怪しい",d:"可疑的",lang:"ja"},
+{w:"怪しい",d:"可疑的",lang:"ja",r:"あやしい"},
 {w:"しょんばり",d:"郁闷",lang:"ja"},
-{w:"スカウト",d:"scout",lang:"ja"},
+{w:"スカウト",d:"scout",lang:"ja",r:"すかうと"},
 {w:"punctual",d:"准时",lang:"en"},
 {w:"lecturing someone",d:"训斥某人",lang:"en"},
-{w:"お年寄り",d:"老年人",lang:"ja"},
+{w:"お年寄り",d:"老年人",lang:"ja",r:"おとしより"},
 {w:"masculine",d:"男性",lang:"en"},
 {w:"whipped cream",d:"鲜奶油",lang:"en"},
 {w:"jelly",d:"果冻",lang:"en"},
 {w:"clumsy",d:"笨拙",lang:"en"},
 {w:"fancies",d:"幻想",lang:"en"},
 {w:"catch",d:"捕捉",lang:"en"},
-{w:"うまい話",d:"好价钱",lang:"ja"},
+{w:"うまい話",d:"好价钱",lang:"ja",r:"うまいはなし"},
 {w:"snacks",d:"零食",lang:"en"},
 {w:"yummy",d:"美味",lang:"en"},
 {w:"らしい",d:"显然",lang:"ja"},
@@ -1167,7 +1175,7 @@ const BUILTIN = [
 {w:"frantically",d:"疯狂地",lang:"en"},
 {w:"desperately",d:"绝望地",lang:"en"},
 {w:"pitiable",d:"可怜的",lang:"en"},
-{w:"経験",d:"经验",lang:"ja"},
+{w:"経験",d:"经验",lang:"ja",r:"けいけん"},
 {w:"ままだ",d:"仍然",lang:"ja"},
 {w:"fort",d:"堡",lang:"en"},
 {w:"びくり",d:"惊喜",lang:"ja"},
@@ -1175,7 +1183,7 @@ const BUILTIN = [
 {w:"うまく",d:"成功地",lang:"ja"},
 {w:"prosecution",d:"起诉",lang:"en"},
 {w:"stride",d:"步幅",lang:"en"},
-{w:"お尻",d:"屁股",lang:"ja"},
+{w:"お尻",d:"屁股",lang:"ja",r:"おしり"},
 {w:"consultation",d:"咨询",lang:"en"},
 {w:"bilateral",d:"双边",lang:"en"},
 {w:"vitaliation",d:"活力",lang:"en"},
@@ -1227,8 +1235,8 @@ const BUILTIN = [
 {w:"deteriorate",d:"恶化",lang:"en"},
 {w:"monolithic franchise",d:"整体特许经营",lang:"en"},
 {w:"brandishing",d:"挥舞",lang:"en"},
-{w:"適切",d:"合适的",lang:"ja"},
-{w:"悲しい",d:"伤心",lang:"ja"},
+{w:"適切",d:"合适的",lang:"ja",r:"てきせつ"},
+{w:"悲しい",d:"伤心",lang:"ja",r:"かなしい"},
 {w:"reactionary",d:"反动",lang:"en"},
 {w:"facilitate",d:"促进",lang:"en"},
 {w:"jaguar",d:"美洲虎",lang:"en"},
@@ -1276,7 +1284,7 @@ const BUILTIN = [
 {w:"cautious",d:"谨慎",lang:"en"},
 {w:"wrist",d:"手腕",lang:"en"},
 {w:"aerodynamic",d:"空气动力学",lang:"en"},
-{w:"お茶を入りましたから",d:"我泡了些茶。",lang:"ja"},
+{w:"お茶を入りましたから",d:"我泡了些茶。",lang:"ja",r:"おちゃをいりましたから"},
 {w:"sheer audacity",d:"纯粹的大胆",lang:"en"},
 {w:"undercover",d:"秘密",lang:"en"},
 {w:"stirrer",d:"搅拌器",lang:"en"},
@@ -1409,12 +1417,12 @@ const BUILTIN = [
 {w:"ことわざ",d:"谚语",lang:"ja"},
 {w:"martial",d:"武术",lang:"en"},
 {w:"govern",d:"治理",lang:"en"},
-{w:"食事",d:"一顿饭",lang:"ja"},
+{w:"食事",d:"一顿饭",lang:"ja",r:"しょくじ"},
 {w:"dentistry",d:"牙科",lang:"en"},
 {w:"comfy",d:"舒适",lang:"en"},
 {w:"Temporarily",d:"暂时地",lang:"en"},
 {w:"outfoxing us",d:"智胜我们",lang:"en"},
-{w:"メンタル",d:"精神的",lang:"ja"},
+{w:"メンタル",d:"精神的",lang:"ja",r:"めんたる"},
 {w:"withdraw",d:"提取",lang:"en"},
 {w:"demurrage",d:"滞期费",lang:"en"},
 {w:"stowaway",d:"偷渡者",lang:"en"},
@@ -1446,7 +1454,7 @@ const BUILTIN = [
 {w:"referendum",d:"公投",lang:"en"},
 {w:"conscription",d:"征兵",lang:"en"},
 {w:"あらう",d:"洗",lang:"ja"},
-{w:"匂い",d:"气味",lang:"ja"},
+{w:"匂い",d:"气味",lang:"ja",r:"におい"},
 {w:"peculiar",d:"奇特",lang:"en"},
 {w:"dodge",d:"躲闪",lang:"en"},
 {w:"concession",d:"让步",lang:"en"},
@@ -1484,7 +1492,7 @@ const BUILTIN = [
 {w:"toaster",d:"烤面包机",lang:"en"},
 {w:"stove",d:"火炉",lang:"en"},
 {w:"companion",d:"伴侣",lang:"en"},
-{w:"クラクション",d:"喇叭",lang:"ja"},
+{w:"クラクション",d:"喇叭",lang:"ja",r:"くらくしょん"},
 {w:"horn",d:"喇叭",lang:"en"},
 {w:"siren",d:"警笛",lang:"en"},
 {w:"closet",d:"壁橱",lang:"en"},
@@ -1499,7 +1507,7 @@ const BUILTIN = [
 {w:"rivalry",d:"对抗",lang:"en"},
 {w:"maternity ward",d:"产科病房",lang:"en"},
 {w:"たびに",d:"每次",lang:"ja"},
-{w:"イベント",d:"事件",lang:"ja"},
+{w:"イベント",d:"事件",lang:"ja",r:"いべんと"},
 {w:"cherry blossom",d:"樱花",lang:"en"},
 {w:"get claimed",d:"被认领",lang:"en"},
 {w:"nightmarish",d:"噩梦般的",lang:"en"},
@@ -1602,7 +1610,7 @@ const BUILTIN = [
 {w:"spouse",d:"配偶",lang:"en"},
 {w:"authenticate",d:"认证",lang:"en"},
 {w:"consignee",d:"收货人",lang:"en"},
-{w:"構いません",d:"没问题。",lang:"ja"},
+{w:"構いません",d:"没问题。",lang:"ja",r:"かまいません"},
 {w:"brats",d:"小孩",lang:"en"},
 {w:"pigeonhole",d:"归档",lang:"en"},
 {w:"entrap",d:"诱捕",lang:"en"},
@@ -1621,7 +1629,7 @@ const BUILTIN = [
 {w:"raffle",d:"抽奖",lang:"en"},
 {w:"crutch",d:"拐杖",lang:"en"},
 {w:"CANE",d:"甘蔗",lang:"en"},
-{w:"手伝い",d:"帮助",lang:"ja"},
+{w:"手伝い",d:"帮助",lang:"ja",r:"てつだい"},
 {w:"これを くれて",d:"给我这个",lang:"ja"},
 {w:"clover",d:"三叶草",lang:"en"},
 {w:"wipe",d:"擦拭",lang:"en"},
@@ -1629,8 +1637,8 @@ const BUILTIN = [
 {w:"souvenir",d:"纪念品",lang:"en"},
 {w:"inferior",d:"下",lang:"en"},
 {w:"faint",d:"头晕的",lang:"en"},
-{w:"やる気",d:"动机",lang:"ja"},
-{w:"直せ",d:"修复它",lang:"ja"},
+{w:"やる気",d:"动机",lang:"ja",r:"やるき"},
+{w:"直せ",d:"修复它",lang:"ja",r:"なおせ"},
 {w:"elaborate",d:"精心制作的",lang:"en"},
 {w:"さわらせて",d:"让我摸摸它",lang:"ja"},
 {w:"いちごの",d:"草莓",lang:"ja"},
@@ -1657,7 +1665,7 @@ const BUILTIN = [
 {w:"かっこいい",d:"凉爽的",lang:"ja"},
 {w:"stunning",d:"令人惊叹的",lang:"en"},
 {w:"cherry",d:"樱桃",lang:"en"},
-{w:"暮らし",d:"活的",lang:"ja"},
+{w:"暮らし",d:"活的",lang:"ja",r:"くらし"},
 {w:"salt",d:"盐",lang:"en"},
 {w:"submissive",d:"顺从的",lang:"en"},
 {w:"effeminate",d:"柔弱的",lang:"en"},
@@ -1696,24 +1704,24 @@ const BUILTIN = [
 {w:"gift certificate",d:"礼券",lang:"en"},
 {w:"ぶつかる",d:"碰撞",lang:"ja"},
 {w:"jackpot",d:"大奖",lang:"en"},
-{w:"試合",d:"游戏",lang:"ja"},
+{w:"試合",d:"游戏",lang:"ja",r:"しあい"},
 {w:"medallions",d:"奖章",lang:"en"},
 {w:"skateboard",d:"滑板",lang:"en"},
 {w:"humidity",d:"湿度",lang:"en"},
 {w:"grayscale",d:"灰度",lang:"en"},
 {w:"ひろくて",d:"宽的",lang:"ja"},
-{w:"賑やか",d:"忙碌的",lang:"ja"},
+{w:"賑やか",d:"忙碌的",lang:"ja",r:"にぎやか"},
 {w:"scary",d:"可怕的",lang:"en"},
-{w:"すぐに行きます",d:"我马上就到",lang:"ja"},
+{w:"すぐに行きます",d:"我马上就到",lang:"ja",r:"すぐにいきます"},
 {w:"tricky",d:"棘手",lang:"en"},
 {w:"sprout",d:"发芽",lang:"en"},
 {w:"らくなの",d:"简单的",lang:"ja"},
 {w:"おかしい",d:"奇怪的",lang:"ja"},
-{w:"実家",d:"父母家",lang:"ja"},
+{w:"実家",d:"父母家",lang:"ja",r:"じっか"},
 {w:"ごみ",d:"垃圾",lang:"ja"},
-{w:"同じ",d:"相同的",lang:"ja"},
+{w:"同じ",d:"相同的",lang:"ja",r:"おなじ"},
 {w:"receipt",d:"收据",lang:"en"},
-{w:"厳しい",d:"严格的",lang:"ja"},
+{w:"厳しい",d:"严格的",lang:"ja",r:"いかめしい"},
 {w:"crack",d:"裂缝",lang:"en"},
 {w:"malicious",d:"恶意",lang:"en"},
 {w:"gibber",d:"胡言乱语",lang:"en"},
@@ -1847,7 +1855,7 @@ const BUILTIN = [
 {w:"not at all",d:"一点也不",lang:"en"},
 {w:"sellout",d:"卖光",lang:"en"},
 {w:"betray",d:"背叛",lang:"en"},
-{w:"戻り",d:"返回",lang:"ja"},
+{w:"戻り",d:"返回",lang:"ja",r:"もどり"},
 {w:"creeps",d:"小兵",lang:"en"},
 {w:"hallway",d:"门厅",lang:"en"},
 {w:"give away",d:"送",lang:"en"},
@@ -1876,7 +1884,7 @@ const BUILTIN = [
 {w:"Australopithecus",d:"南方古猿",lang:"en"},
 {w:"perchance",d:"或许",lang:"en"},
 {w:"virility",d:"男子气概",lang:"en"},
-{w:"場所",d:"地方",lang:"ja"},
+{w:"場所",d:"地方",lang:"ja",r:"ばしょ"},
 {w:"ちさい",d:"小的",lang:"ja"},
 {w:"くに",d:"国家",lang:"ja"},
 {w:"やった",d:"我做到了",lang:"ja"},
@@ -1900,7 +1908,7 @@ const BUILTIN = [
 {w:"steep",d:"陡",lang:"en"},
 {w:"Channelers",d:"通灵者",lang:"en"},
 {w:"BOW",d:"弓",lang:"en"},
-{w:"夜型",d:"猫头鹰",lang:"ja"},
+{w:"夜型",d:"猫头鹰",lang:"ja",r:"よるがた"},
 {w:"curfew",d:"宵禁",lang:"en"},
 {w:"exhaust case",d:"排气箱",lang:"en"},
 {w:"vulgar",d:"庸俗",lang:"en"},
@@ -2359,7 +2367,7 @@ const BUILTIN = [
 {w:"v notch",d:"V 型缺口",lang:"en"},
 {w:"casting",d:"铸件",lang:"en"},
 {w:"discrete",d:"离散的",lang:"en"},
-{w:"大人",d:"成人",lang:"ja"},
+{w:"大人",d:"成人",lang:"ja",r:"おとな"},
 {w:"volition",d:"意志",lang:"en"},
 {w:"stuff",d:"东西",lang:"en"},
 {w:"butcher",d:"屠夫",lang:"en"},
@@ -2442,14 +2450,14 @@ const BUILTIN = [
 {w:"frustrating",d:"令人沮丧",lang:"en"},
 {w:"hypocrite",d:"伪君子",lang:"en"},
 {w:"constitution",d:"宪法",lang:"en"},
-{w:"お兄さん",d:"哥哥",lang:"ja"},
+{w:"お兄さん",d:"哥哥",lang:"ja",r:"おにいさん"},
 {w:"nezumi",d:"鼠",lang:"ja"},
 {w:"starcraft",d:"星际争霸",lang:"en"},
 {w:"ransom",d:"赎金",lang:"en"},
 {w:"kidnap",d:"绑架",lang:"en"},
 {w:"hanging out",d:"闲逛",lang:"en"},
 {w:"sigoto",d:"工作",lang:"ja"},
-{w:"赤ちゃん",d:"婴儿",lang:"ja"},
+{w:"赤ちゃん",d:"婴儿",lang:"ja",r:"あかちゃん"},
 {w:"deceptively",d:"欺骗性地",lang:"en"},
 {w:"amai",d:"甜的",lang:"ja"},
 {w:"sour",d:"酸的",lang:"en"},
@@ -2869,7 +2877,7 @@ const BUILTIN = [
 {w:"drastically",d:"急剧地",lang:"en"},
 {w:"exaggerate",d:"夸大",lang:"en"},
 {w:"intervention",d:"干涉",lang:"en"},
-{w:"素晴らしい。",d:"精彩的。",lang:"ja"},
+{w:"素晴らしい。",d:"精彩的。",lang:"ja",r:"すばらしい。"},
 {w:"locomotive",d:"机车",lang:"en"},
 {w:"veggie",d:"素食",lang:"en"},
 {w:"criteria",d:"标准",lang:"en"},
@@ -3454,7 +3462,7 @@ const BUILTIN = [
 {w:"flourish",d:"繁荣",lang:"en"},
 {w:"sovereign",d:"主权的",lang:"en"},
 {w:"liberate",d:"解放",lang:"en"},
-{w:"enomous",d:"巨大的",lang:"en"},
+{w:"enomous",d:"巨大的",lang:"en"}
 ];
 
 const STORAGE_KEY='studyapp_words';
@@ -3505,6 +3513,52 @@ function pickNext(exclude){
   return r.length===0?-1:r[Math.floor(Math.random()*r.length)];
 }
 
+// ── 英语词典 API（音标 + 多义） ──
+const DICT_CACHE_KEY='studyapp_dict_';
+async function fetchEnDict(word){
+  const key=DICT_CACHE_KEY+word.toLowerCase();
+  const cached=localStorage.getItem(key);
+  if(cached) return JSON.parse(cached);
+  try{
+    const res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+    if(!res.ok) return null;
+    const data=await res.json();
+    const entry=data[0];
+    const phonetic=entry?.phonetic||entry?.phonetics?.find(p=>p.text)?.text||'';
+    const meanings=(entry?.meanings||[]).slice(0,4).map(m=>({
+      pos:m.partOfSpeech||'',
+      defs:(m.definitions||[]).slice(0,2).map(d=>d.definition||'').filter(Boolean)
+    })).filter(m=>m.defs.length);
+    const result={phonetic,meanings};
+    try{localStorage.setItem(key,JSON.stringify(result));}catch{}
+    return result;
+  }catch{return null;}
+}
+
+// ── 渲染多义词到背面 ──
+function renderDefinitions(item, dictData){
+  const container=document.getElementById('back-definitions');
+  container.innerHTML='';
+
+  // 优先用 API 数据，否则用内置数据
+  if(dictData?.meanings?.length){
+    dictData.meanings.forEach(m=>{
+      m.defs.forEach(def=>{
+        const el=document.createElement('div');
+        el.className='def-item';
+        el.innerHTML=(m.pos?`<span class="def-pos">${m.pos}</span>`:'')
+          +`<span class="def-text">${def}</span>`;
+        container.appendChild(el);
+      });
+    });
+  } else {
+    const el=document.createElement('div');
+    el.className='def-item';
+    el.innerHTML=`<span class="def-text">${item.defClean||item.d}</span>`;
+    container.appendChild(el);
+  }
+}
+
 // ── 渲染 ──
 const BADGE_MAP={en:{cls:'badge-en',txt:'英'},ja:{cls:'badge-ja',txt:'日'},zh:{cls:'badge-zh',txt:'中'}};
 function showCard(idx){
@@ -3512,19 +3566,40 @@ function showCard(idx){
   currentIdx=idx;
   isFlipped=false;
   const item=allWords[idx];
+
   // 正面
   const badge=document.getElementById('lang-badge');
   const bm=BADGE_MAP[item.lang]||BADGE_MAP.en;
   badge.className=bm.cls;
   badge.textContent=bm.txt;
   document.getElementById('word-display').textContent=item.w;
-  document.getElementById('phonetic-display').textContent='';
-  // 背面
+
+  // 正面：日语显示平假名，英语先清空再异步填入音标
+  if(item.lang==='ja'){
+    document.getElementById('phonetic-display').textContent=item.r||'';
+  } else {
+    document.getElementById('phonetic-display').textContent='';
+  }
+
+  // 背面基础内容
   document.getElementById('back-word').textContent=item.w;
+  const readingEl=document.getElementById('back-reading');
+  readingEl.textContent=item.lang==='ja'&&item.r?item.r:'';
   const posEl=document.getElementById('back-pos');
-  if(item.pos){posEl.textContent=item.pos;posEl.style.display='block'}
-  else{posEl.style.display='none'}
-  document.getElementById('back-definition').textContent=item.defClean||item.d;
+  posEl.style.display='none';
+  renderDefinitions(item, null);
+
+  // 英语：异步获取音标和多义词
+  if(item.lang==='en'){
+    fetchEnDict(item.w).then(data=>{
+      if(!data)return;
+      // 只更新当前卡片（用户可能已换卡）
+      if(allWords[currentIdx]?.w!==item.w)return;
+      if(data.phonetic) document.getElementById('phonetic-display').textContent=data.phonetic;
+      renderDefinitions(item, data);
+    });
+  }
+
   // 重置翻转
   const scene=document.getElementById('flashcard');
   scene.classList.remove('flipped','card-animate');
